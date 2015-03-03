@@ -85,7 +85,7 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
   FileUtils.sed("#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
-  FileUtils.sed("#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/bin/install.conf", /x64/, "i586")
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
   sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --no-same-owner --no-same-permissions --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x64_dirname}.tar.gz"]
