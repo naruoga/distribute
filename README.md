@@ -13,9 +13,10 @@ Aipo の配布用パッケージをビルドするプロジェクトです。
 
 ### Linux版インストーラ
 
+```target``` フォルダに 32bit版、64bit版の Aipo インストーラがビルドされます。
+
 #### 最新版（master）
 
-```target``` フォルダに 32bit版、64bit版の Aipo インストーラがビルドされます。
 
 ```
 rake installer:latest
