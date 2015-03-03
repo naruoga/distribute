@@ -20,8 +20,6 @@
 
 cd `dirname $0` || exit 1
 
-TMP_AIPO_HOME=echo `date +%Y%m%d%H%M%S`
-
 sh bin/validate.sh || exit 1
 sh bin/jre.sh || exit 1
 sh bin/postgres.sh || exit 1

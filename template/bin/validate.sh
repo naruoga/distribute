@@ -101,5 +101,6 @@ if [ "$tmp_packages" != "" ]; then
 		echo $tmp_packages
 	fi
 	fi
+	exit 1
 fi
 
