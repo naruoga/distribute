@@ -21,7 +21,7 @@ require 'date'
 
 LATEST_BRANCH        = "master"
 STABLE_BRANCH        = "master"
-NOW                  =  DateTime.now.strftime("%Y%m%d%H")
+NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
 STABLE_VERSION       = "8.0.0.0"
@@ -51,7 +51,7 @@ namespace :installer do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo(branch: "#{STABLE_BRANCH}")
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
-    installer_package
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}")
   end
 end
 
@@ -67,9 +67,9 @@ def build_aipo_opensocial(branch: "master")
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
-def installer_package(version: "#{LATEST_VERSION_SHORT}")
-  dist_x86_dirname = "aipo-#{version}-linux-x86"
-  dist_x64_dirname = "aipo-#{version}-linux-x64"
+def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}")
+  dist_x86_dirname = "aipo-#{version_short}-linux-x86"
+  dist_x64_dirname = "aipo-#{version_short}-linux-x64"
   sh %[mkdir -p "#{TARGET_DIR}"]
   sh %[mkdir -p "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}"]
   sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}"]
@@ -83,9 +83,23 @@ def installer_package(version: "#{LATEST_VERSION_SHORT}")
   FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
-  sh %[sed -i -e 's|x64|i586|g' "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf"]
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
+  FileUtils.sed("#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
+  FileUtils.sed("#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/bin/install.conf", /x64/, "i586")
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
+  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --no-same-owner --no-same-permissions --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x64_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --exclude ".git" --exclude "*i586.tar.gz" #{dist_x64_dirname})]
+  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --no-same-owner --no-same-permissions --exclude ".git" --exclude "*i586.tar.gz" #{dist_x64_dirname})]
+end
+
+module FileUtils
+  def self.sed(file, pattern, replacement)
+    File.open(file, "r") do |f_in|
+      buf = f_in.read
+      buf.gsub!(pattern, replacement)
+      File.open(file, "w") do |f_out|
+        f_out.write(buf)
+      end
+    end
+  end
 end

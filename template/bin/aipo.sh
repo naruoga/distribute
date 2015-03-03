@@ -137,7 +137,7 @@ BODY
 
 
 ipaddr=`ip -f inet -o addr | grep -v "127.0.0.1" | cut -d\  -f 7 | cut -d/ -f 1 | awk 'NR == 1'`
-if [ "$ipaddr == "" ]; then
+if [ "$ipaddr" == "" ]; then
 	ipaddr="127.0.0.1"
 fi
 
@@ -146,6 +146,8 @@ if [ "$port" == ":80" ]; then
 	port=
 fi
 
+echo ""
+echoIndo "============================================="
 echoInfo "Aipo のインストールが完了しました。"
 echoInfo "バージョン　　　　　: $AIPO_VERSION"
 echoInfo "インストール先　　　: $AIPO_HOME"
@@ -157,5 +159,4 @@ echoInfo "起動方法:"
 echoInfo "$AIPO_HOME/bin/startup.sh"
 echoInfo "停止方法:"
 echoInfo "$AIPO_HOME/bin/shutdown.sh"
-
 
