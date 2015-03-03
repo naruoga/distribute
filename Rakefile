@@ -85,7 +85,7 @@ def installer_package(version: "#{LATEST_VERSION_SHORT}")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
   sh %[sed -i -e 's|x64|i586|g' "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf"]
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --exclude ".git" --exclude "*i586.tar.gz" #{dist_x86_dirname})]
+  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x64_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --exclude ".git" --exclude "*x86.tar.gz" #{dist_x64_dirname})]
+  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --exclude ".git" --exclude "*i586.tar.gz" #{dist_x64_dirname})]
 end
