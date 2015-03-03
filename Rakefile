@@ -27,12 +27,12 @@ LATEST_VERSION_SHORT = "latest-#{NOW}"
 STABLE_VERSION       = "8.0.0.0"
 STABLE_VERSION_SHORT = "8.0"
 
-BUILD_DIR = File.expand_path("build")
-BUILD_DIST_DIR = File.expand_path("build/dist")
-BUILD_DIST_X64_DIR = File.expand_path("build/dist/x64")
-BUILD_DIST_X86_DIR = File.expand_path("build/dist/x86")
-TEMPLATE_DIR = File.expand_path("template")
-TARGET_DIR = File.expand_path("target")
+BUILD_DIR            = File.expand_path("build")
+BUILD_DIST_DIR       = File.expand_path("build/dist")
+BUILD_DIST_X64_DIR   = File.expand_path("build/dist/x64")
+BUILD_DIST_X86_DIR   = File.expand_path("build/dist/x86")
+TEMPLATE_DIR         = File.expand_path("template")
+TARGET_DIR           = File.expand_path("target")
 
 task default: ["installer:latest"]
 
@@ -61,7 +61,7 @@ def build_aipo(branch: "#{LATEST_BRANCH}")
   sh %[(cd #{BUILD_DIR}/aipo; mvn clean; mvn install)]
 end
 
-def build_aipo_opensocial(branch: "master")
+def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
   sh %[(cd #{BUILD_DIR}; git clone -b #{branch} https://github.com/aipocom/aipo-opensocial.git)]
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
