@@ -41,6 +41,11 @@ cp -rf $TOMCAT_HOME/webapps/ROOT/WEB-INF/conf/*.xreg  $AIPO_HOME/backup/xreg
 
 cp -rf $DIST_DIR/$POSTGRES_DRIVER $TOMCAT_HOME/lib/
 
+mkdir -p $TOMCAT_HOME/datasource
+cp -rf $TOMCAT_HOME/webapps/ROOT/WEB-INF/datasource/dbcp-org001.properties  $TOMCAT_HOME/datasource/
+
+mkdir -p $TOMCAT_HOME/data
+
 mkdir -p $AIPO_HOME/bin
 cp -rf $DIST_DIR/bin/* $AIPO_HOME/bin/
 chmod +x $AIPO_HOME/bin/*.sh
@@ -49,15 +54,9 @@ chmod +x $AIPO_HOME/bin/*.sh
 # Configure webapps.
 #///////////////////////////////////////////////
 
-sed -i "s/localhost:5432/localhost:${POSTGRES_PORT}/g" $TOMCAT_HOME/webapps/ROOT/WEB-INF/datasource/dbcp-org001.properties
-sed -i "s/cayenne.dbcp.password=aipo/cayenne.dbcp.password=${POSTGRES_PASSWORD}/g" $TOMCAT_HOME/webapps/ROOT/WEB-INF/datasource/dbcp-org001.properties
-sed -i "s/cayenne.dbcp.username=postgres/cayenne.dbcp.username=${POSTGRES_USER}/g" $TOMCAT_HOME/webapps/ROOT/WEB-INF/datasource/dbcp-org001.properties
-
-sed -i "s/localhost:5432/localhost:${POSTGRES_PORT}/g" $TOMCAT_HOME/webapps/container/WEB-INF/datasource/dbcp-org001.properties
-sed -i "s/cayenne.dbcp.password=aipo/cayenne.dbcp.password=${POSTGRES_PASSWORD}/g" $TOMCAT_HOME/webapps/container/WEB-INF/datasource/dbcp-org001.properties
-sed -i "s/cayenne.dbcp.username=postgres/cayenne.dbcp.username=${POSTGRES_USER}/g" $TOMCAT_HOME/webapps/container/WEB-INF/datasource/dbcp-org001.properties
-
-sed -i "s/aipo.webappserver.port=8080/aipo.webappserver.port=${TOMCAT_PORT}/g" $TOMCAT_HOME/webapps/ROOT/WEB-INF/conf/AipoResources.properties
+sed -i "s/localhost:5432/localhost:${POSTGRES_PORT}/g" $TOMCAT_HOME/datasource/dbcp-org001.properties
+sed -i "s/cayenne.dbcp.password=aipo/cayenne.dbcp.password=${POSTGRES_PASSWORD}/g" $TOMCAT_HOME/datasource/dbcp-org001.properties
+sed -i "s/cayenne.dbcp.username=postgres/cayenne.dbcp.username=${POSTGRES_USER}/g" $TOMCAT_HOME/datasource/dbcp-org001.properties
 
 seed="0123456789abcdefghijklmnopqrstuvwxyz"
 key=""
