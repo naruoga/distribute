@@ -26,6 +26,10 @@ cd `dirname $0` || exit 1
 . ../conf/postgres.conf
 . ../conf/aipo.conf
 
+export JRE_HOME=$JAVA_HOME
+
+echoInfo "Aipo のリストアを開始します。"
+
 function listfunc {
 	unset count
 	for DIR in $*
@@ -81,12 +85,15 @@ if [ $vsn !=  $vsnc ]; then
 	exit 1
 fi
 
-sh $TOMCAT_HOME/bin/shutdown.sh
+echo "Tomcat を停止しています。"
+sh $TOMCAT_HOME/bin/shutdown.sh &> $TOMCAT_HOME/logs/shutdown.log
 wait
+
+echo "Aipo をリストアしています。"
 sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_restore -Fc -c -U $POSTGRES_USER -p $POSTGRES_PORT $AIPO_HOME/backup/$bg_dir/aipo_db.dump -d org001
 
 if [ $? -ne 0 ]; then
-	echoError "リストアに失敗しました。";
+	echoError "Aipo のリストアに失敗しました。";
 else
 	rm -rf $TOMCAT_HOME/data/*
 	cp -rf $AIPO_HOME/backup/$bg_dir/files $TOMCAT_HOME/data/
@@ -95,7 +102,8 @@ fi
 
 wait
 
+echo "Tomcat を開始しています。"
 CATALINA_OPTS="-server -Xmx512M -Xms64M -Xss256k -Djava.awt.headless=true -Dsun.nio.cs.map=x-windows-iso2022jp/ISO-2022-JP"
-sh $TOMCAT_HOME/bin/startup.sh
+sh $TOMCAT_HOME/bin/startup.sh &> $TOMCAT_HOME/logs/startup.log
 
 echoInfo "Aipo のリストアが完了しました。"

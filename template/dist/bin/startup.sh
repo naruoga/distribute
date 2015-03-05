@@ -26,7 +26,6 @@ cd `dirname $0` || exit 1
 . ../conf/postgres.conf
 . ../conf/aipo.conf
 
-export JAVA_HOME=$JAVA_HOME
 export JRE_HOME=$JAVA_HOME
 
 if [ -d $TOMCAT_HOME/work/Catalina/localhost/_ ]; then
