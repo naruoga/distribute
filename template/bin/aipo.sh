@@ -146,7 +146,7 @@ if [ "$port" == ":80" ]; then
 fi
 
 echo ""
-echoIndo "============================================="
+echoInfo "============================================="
 echoInfo "Aipo のインストールが完了しました。"
 echoInfo "バージョン　　　　　: $AIPO_VERSION"
 echoInfo "インストール先　　　: $AIPO_HOME"
