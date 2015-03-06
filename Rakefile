@@ -43,8 +43,8 @@ end
 namespace :installer do
   task :latest do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
-    #build_aipo
-    #build_aipo_opensocial
+    build_aipo
+    build_aipo_opensocial
     installer_package
   end
   task :stable do
@@ -76,9 +76,9 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   sh %[mkdir -p "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql"]
   sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist/sql"]
 
-  #FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
-  #FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
-  #FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
+  FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
+  FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
+  FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')] 
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
