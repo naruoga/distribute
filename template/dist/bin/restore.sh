@@ -53,6 +53,13 @@ function listfunc {
 	fi
 }
 
+echoRestoreError() {
+    echoError "Aipo のリストアに失敗しました。";
+    echoError "$1";
+    echo "Tomcat を開始しています。"
+    sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
+}
+
 cd $AIPO_HOME/backup
 list=`ls | grep ............[0-9]`
 if [ `expr length "$list"` -le 0 ]; then
@@ -91,7 +98,7 @@ sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
 wait
 
 echo "Aipo をリストアしています。"
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_restore -Fc -c -U $POSTGRES_USER -p $POSTGRES_PORT $AIPO_HOME/backup/$bg_dir/aipo_db.dump -d org001 > $TOMCAT_HOME/logs/restore.log 2>&1 || { echoRestoreError "データベースリストア中にリストアしました。"; exit 1; }
+sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_restore -Fc -c -U $POSTGRES_USER -p $POSTGRES_PORT $AIPO_HOME/backup/$bg_dir/aipo_db.dump -d org001 > $TOMCAT_HOME/logs/restore.log 2>&1 || { echoRestoreError "データベースリストア中にエラーが発生しました。"; exit 1; }
 
 rm -rf $TOMCAT_HOME/data/*
 cp -rf $AIPO_HOME/backup/$bg_dir/files $TOMCAT_HOME/data/ || { echoRestoreError "データコピー中にエラーが発生しました。"; exit 1; }
@@ -101,10 +108,3 @@ echo "Tomcat を開始しています。"
 sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
 
 echoInfo "Aipo のリストアが完了しました。"
-
-echoRestoreError() {
-    echoError "Aipo のリストアに失敗しました。";
-    echoError "$1";
-    echo "Tomcat を開始しています。"
-	sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
-}

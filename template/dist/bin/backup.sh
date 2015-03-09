@@ -31,6 +31,14 @@ export CATALINA_OPTS=$CATALINA_OPTS
 
 echo "Aipo のバックアップを開始します。"
 
+echoBackupError() {
+    echoError "Aipo のバックアップに失敗しました。";
+    echoError "$1";
+    rm -rf $AIPO_HOME/backup/$bg_dir
+    echo "Tomcat を開始しています。"
+    sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
+}
+
 date_dir=`date +"%Y%m%d%H%M"`
 count=0
 tmp_dir=$date_dir
@@ -74,10 +82,4 @@ sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
 
 echoInfo "Aipo のバックアップが完了しました。"
 
-echoBackupError() {
-    echoError "Aipo のバックアップに失敗しました。";
-    echoError "$1";
-	rm -rf $AIPO_HOME/backup/$bg_dir
-    echo "Tomcat を開始しています。"
-    sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
-}
+
