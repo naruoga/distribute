@@ -90,9 +90,11 @@ done
 # Configure.
 #///////////////////////////////////////////////
 
-sed -i -e 's|protocol="HTTP/1.1"|protocol="org.apache.coyote.http11.Http11Protocol"|g' $TOMCAT_HOME/conf/server.xml
+sed -i 's|protocol="HTTP/1.1"|protocol="org.apache.coyote.http11.Http11Protocol"|g' $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8080\"|port=\"$TOMCAT_PORT\"|g" $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8005\"|port=\"$TOMCAT_SHUTDOWN_PORT\"|g" $TOMCAT_HOME/conf/server.xml
+tmp_str='<Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on" />'
+sed -i 's|$tmp_str|<!--$tmp_str-->|g' $TOMCAT_HOME/conf/server.xml
 echo "user.timezone=Asia/Tokyo" >> $TOMCAT_HOME/conf/catalina.properties
 
 #///////////////////////////////////////////////

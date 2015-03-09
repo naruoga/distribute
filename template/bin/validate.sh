@@ -34,24 +34,12 @@ if [ "${current_user}" != "root" ]; then
 	exit 1
 fi
 
-mkdir -p $AIPO_HOME-$AIPO_VERSION
-tmp_str=`ls $AIPO_HOME-$AIPO_VERSION`
-if [ "$tmp_str" != "" ]; then
-        echoError "$AIPO_HOME-$AIPO_VERSION ディレクトリを空にしてください。"
-        exit 1
-fi
-
-if [ -L $AIPO_HOME ]; then
-        TMP_AIPO_HOME_LINK=`readlink $AIPO_HOME`
-        unlink $AIPO_HOME
-else
-if [ -d $AIPO_HOME ]; then
+if [ -e $AIPO_HOME ]; then
         echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
 	exit 1
+else
+	mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }
 fi
-fi
-
-ln -s $AIPO_HOME-$AIPO_VERSION $AIPO_HOME
 
 $tmp_packages
 if [ -x /usr/bin/gcc ]; then

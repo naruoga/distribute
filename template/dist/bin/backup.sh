@@ -26,6 +26,11 @@ cd `dirname $0` || exit 1
 . ../conf/postgres.conf
 . ../conf/aipo.conf
 
+export JRE_HOME=$JAVA_HOME
+export CATALINA_OPTS=$CATALINA_OPTS
+
+echo "Aipo のバックアップを開始します。"
+
 date_dir=`date +"%Y%m%d%H%M"`
 count=0
 tmp_dir=$date_dir
@@ -45,27 +50,34 @@ while [ $count -lt 100 ]; do
 done
 bg_dir=$date_dir$count
 mkdir -p $AIPO_HOME/backup/$bg_dir
-wait
 chmod 757 $AIPO_HOME/backup/$bg_dir
 
-sh $TOMCAT_HOME/bin/shutdown.sh
-wait
+echo "Tomcat を停止しています。"
+sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
 
-hasError=0
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fp -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db_sql.dump org001 > $AIPO_HOME/backup/dump1.log 2>&1 || { echoError "データベースダンプ中にエラーが発生しました。"; exit 1 }
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fc -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db.dump org001 > $AIPO_HOME/backup/dump2.log 2>&1 || { echoError "データコピー中にエラーが発生しました。"; exit 1 }
+echo "Aipo をバックアップしています。"
+sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fp -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db_sql.dump org001 > $AIPO_HOME/backup/dump1.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
+sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fc -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db.dump org001 > $AIPO_HOME/backup/dump2.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
 
 mkdir -p $TOMCAT_HOME/data/files
 mkdir -p $TOMCAT_HOME/data/mail
-cp -rf $TOMCAT_HOME/data/files $AIPO_HOME/backup/$bg_dir/ || { echoError "データコピー中にエラーが発生しました。"; exit 1 }
-cp -rf $TOMCAT_HOME/data/mail $AIPO_HOME/backup/$bg_dir/ || { echoError "データコピー中にエラーが発生しました。"; exit 1 }
+cp -rf $TOMCAT_HOME/data/files $AIPO_HOME/backup/$bg_dir/ || { echoBackupError "データコピー中にエラーが発生しました。"; exit 1; }
+cp -rf $TOMCAT_HOME/data/mail $AIPO_HOME/backup/$bg_dir/ || { echoBackupError "データコピー中にエラーが発生しました。"; exit 1; }
 
 cat << BODY > $AIPO_HOME/backup/$bg_dir/version.txt
 [System]
 version=$AIPO_VERSION
 BODY
 
-CATALINA_OPTS="-server -Xmx512M -Xms64M -Xss256k -Djava.awt.headless=true -Dsun.nio.cs.map=x-windows-iso2022jp/ISO-2022-JP"
-sh $TOMCAT_HOME/bin/startup.sh
+echo "Tomcat を開始しています。"
+sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
 
 echoInfo "Aipo のバックアップが完了しました。"
+
+echoBackupError() {
+    echoError "Aipo のバックアップに失敗しました。";
+    echoError "$1";
+	rm -rf $AIPO_HOME/backup/$bg_dir
+    echo "Tomcat を開始しています。"
+    sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
+}

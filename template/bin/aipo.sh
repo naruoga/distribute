@@ -88,8 +88,8 @@ tmp_dir=/tmp/.aipo.`date '+%Y%m%d'`
 mkdir -p $tmp_dir
 cp -rf $DIST_DIR/sql/org001.sql $tmp_dir/org001.sql
 cd $AIPO_HOME
-sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/createdb org001 -O ${POSTGRES_USER} -U ${POSTGRES_USER}
-sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/psql -U ${POSTGRES_USER} -d org001 -p $POSTGRES_PORT -f $tmp_dir/org001.sql
+#sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/createdb org001 -O ${POSTGRES_USER} -U ${POSTGRES_USER}
+#sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/psql -U ${POSTGRES_USER} -d org001 -p $POSTGRES_PORT -f $tmp_dir/org001.sql
 cd -
 rm -rf $tmp_dir
 
@@ -146,7 +146,7 @@ if [ "$port" == ":80" ]; then
 fi
 
 echo ""
-echoInfo "============================================="
+echoIndo "============================================="
 echoInfo "Aipo のインストールが完了しました。"
 echoInfo "バージョン　　　　　: $AIPO_VERSION"
 echoInfo "インストール先　　　: $AIPO_HOME"

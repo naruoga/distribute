@@ -27,6 +27,9 @@ cd `dirname $0` || exit 1
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME
+export CATALINA_OPTS=$CATALINA_OPTS
+
+echo "Starting Aipo $AIPO_VERSION."
 
 if [ -d $TOMCAT_HOME/work/Catalina/localhost/_ ]; then
 	rm -rf $TOMCAT_HOME/work/Catalina/localhost/_
@@ -36,14 +39,8 @@ if [ -d $TOMCAT_HOME/work/Catalina/localhost/container ]; then
 fi
 cp -rf $AIPO_HOME/backup/xreg/*.xreg $TOMCAT_HOME/webapps/ROOT/WEB-INF/conf/
 
-
-CATALINA_OPTS="-server -Xmx512M -Xms64M -Xss256k -Djava.awt.headless=true -Dsun.nio.cs.map=x-windows-iso2022jp/ISO-2022-JP"
-export CATALINA_OPTS=$CATALINA_OPTS
-
-sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/postmaster -D $POSTGRES_HOME/data -i &
+sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/postmaster -D $POSTGRES_HOME/data -i > $TOMCAT_HOME/logs/startup.log 2>&1 &
 
 portListenWait ${POSTGRES_PORT}
 
-sh $TOMCAT_HOME/bin/startup.sh
-
-echoInfo "Start Aipo $AIPO_VERSION."
+sh $TOMCAT_HOME/bin/startup.sh >> $TOMCAT_HOME/logs/startup.log 2>&1

@@ -27,9 +27,11 @@ cd `dirname $0` || exit 1
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME
-
-sh $TOMCAT_HOME/bin/shutdown.sh
-
-sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/pg_ctl -D $POSTGRES_HOME/data -o "-i -p $POSTGRES_PORT" stop
+export CATALINA_OPTS=$CATALINA_OPTS
 
 echo "Shutdown Aipo $AIPO_VERSION."
+
+sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
+
+sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/pg_ctl -D $POSTGRES_HOME/data -o "-i -p $POSTGRES_PORT" stop >> $TOMCAT_HOME/logs/shutdown.log 2>&1
+

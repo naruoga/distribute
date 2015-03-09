@@ -27,8 +27,9 @@ cd `dirname $0` || exit 1
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME
+export CATALINA_HOME=$CATALINA_HOME
 
-echoInfo "Aipo のリストアを開始します。"
+echo "Aipo のリストアを開始します。"
 
 function listfunc {
 	unset count
@@ -38,7 +39,7 @@ function listfunc {
 		echo "[$count] `expr substr $DIR 1 4`年`expr substr $DIR 5 2`月`expr substr $DIR 7 2`日`expr substr $DIR 9 2`時`expr substr $DIR 11 2`分"
 	done
 	echo "[0] キャンセル"
-	echoInfo "バックアップファイルを選んで番号を入力してください。"
+	echo "バックアップファイルを選んで番号を入力してください。"
 	read select
 	if [ $select = "0" ]; then
 		echoError "リストアはキャンセルされました。"
@@ -86,24 +87,24 @@ if [ $vsn !=  $vsnc ]; then
 fi
 
 echo "Tomcat を停止しています。"
-sh $TOMCAT_HOME/bin/shutdown.sh &> $TOMCAT_HOME/logs/shutdown.log
+sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
 wait
 
 echo "Aipo をリストアしています。"
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_restore -Fc -c -U $POSTGRES_USER -p $POSTGRES_PORT $AIPO_HOME/backup/$bg_dir/aipo_db.dump -d org001
+sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_restore -Fc -c -U $POSTGRES_USER -p $POSTGRES_PORT $AIPO_HOME/backup/$bg_dir/aipo_db.dump -d org001 > $TOMCAT_HOME/logs/restore.log 2>&1 || { echoRestoreError "データベースリストア中にリストアしました。"; exit 1; }
 
-if [ $? -ne 0 ]; then
-	echoError "Aipo のリストアに失敗しました。";
-else
-	rm -rf $TOMCAT_HOME/data/*
-	cp -rf $AIPO_HOME/backup/$bg_dir/files $TOMCAT_HOME/data/
-	cp -rf $AIPO_HOME/backup/$bg_dir/mail $TOMCAT_HOME/data/
-fi
-
-wait
+rm -rf $TOMCAT_HOME/data/*
+cp -rf $AIPO_HOME/backup/$bg_dir/files $TOMCAT_HOME/data/ || { echoRestoreError "データコピー中にエラーが発生しました。"; exit 1; }
+cp -rf $AIPO_HOME/backup/$bg_dir/mail $TOMCAT_HOME/data/ || { echoRestoreError "データコピー中にエラーが発生しました。"; exit 1; }
 
 echo "Tomcat を開始しています。"
-CATALINA_OPTS="-server -Xmx512M -Xms64M -Xss256k -Djava.awt.headless=true -Dsun.nio.cs.map=x-windows-iso2022jp/ISO-2022-JP"
-sh $TOMCAT_HOME/bin/startup.sh &> $TOMCAT_HOME/logs/startup.log
+sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
 
 echoInfo "Aipo のリストアが完了しました。"
+
+echoRestoreError() {
+    echoError "Aipo のリストアに失敗しました。";
+    echoError "$1";
+    echo "Tomcat を開始しています。"
+	sh $TOMCAT_HOME/bin/startup.sh > $TOMCAT_HOME/logs/startup.log 2>&1
+}

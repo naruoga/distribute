@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Aipo is a groupware program developed by Aimluck,Inc.
 # Copyright (C) 2004-2015 Aimluck,Inc.
@@ -20,9 +20,34 @@
 
 cd `dirname $0` || exit 1
 
-sh bin/validate.sh || exit 1
-sh bin/jre.sh || exit 1
-sh bin/postgres.sh || exit 1
-sh bin/tomcat.sh || exit 1
-sh bin/aipo.sh || exit 1
+if [ "$1" = "" ]; then
+	AIPO_HOME=/usr/local/aipo
+else
+	AIPO_HOME=$1
+fi
+
+if [[ "$AIPO_HOME" =~ ^(/|~) ]]; then
+	echo $AIPO_HOME
+else
+	AIPO_HOME=`pwd`/$AIPO_HOME
+	echo $AIPO_HOME
+fi
+
+export AIPO_HOME=$AIPO_HOME
+
+#rm -rf install.log
+#sh bin/validate.sh 2>&1 | tee -a install.log
+#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+
+#sh bin/jre.sh  2>&1 | tee -a install.log
+#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+
+#sh bin/postgres.sh  2>&1 | tee -a install.log
+#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+
+#sh bin/tomcat.sh  2>&1 | tee -a install.log
+#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+
+sh bin/aipo.sh 2>&1 | tee -a install.log
+if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
