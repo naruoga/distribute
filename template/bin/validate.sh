@@ -34,13 +34,6 @@ if [ "${current_user}" != "root" ]; then
 	exit 1
 fi
 
-if [ -e $AIPO_HOME ]; then
-        echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
-	exit 1
-else
-	mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }
-fi
-
 $tmp_packages
 if [ -x /usr/bin/gcc ]; then
 	echo "gcc OK."
@@ -75,7 +68,7 @@ fi
 if [ -f "/usr/include/zlib.h" ]; then
 	echo "zlib-devel OK."
 else
-        tmp_packages=$tmp_packages"readline-devel "
+        tmp_packages=$tmp_packages"zlib-devel "
 fi
 
 if [ "$tmp_packages" != "" ]; then
@@ -91,4 +84,12 @@ if [ "$tmp_packages" != "" ]; then
 	fi
 	exit 1
 fi
+
+if [ -e $AIPO_HOME ]; then
+echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
+exit 1
+else
+mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }
+fi
+
 

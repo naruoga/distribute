@@ -35,18 +35,18 @@ fi
 
 export AIPO_HOME=$AIPO_HOME
 
-#rm -rf install.log
-#sh bin/validate.sh 2>&1 | tee -a install.log
-#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+rm -rf install.log
+sh bin/validate.sh 2>&1 | tee -a install.log
+if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
-#sh bin/jre.sh  2>&1 | tee -a install.log
-#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+sh bin/jre.sh  2>&1 | tee -a install.log
+if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
-#sh bin/postgres.sh  2>&1 | tee -a install.log
-#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+sh bin/postgres.sh  2>&1 | tee -a install.log
+if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
-#sh bin/tomcat.sh  2>&1 | tee -a install.log
-#if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+sh bin/tomcat.sh  2>&1 | tee -a install.log
+if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
 sh bin/aipo.sh 2>&1 | tee -a install.log
 if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi

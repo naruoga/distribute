@@ -79,22 +79,21 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
-  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')] 
+  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
 
-  FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
-
+ FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist")
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
 
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --no-same-owner --no-same-permissions --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
+  sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --owner=root --group=root --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x64_dirname}.tar.gz"]
-  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --no-same-owner --no-same-permissions --exclude ".git" --exclude "*i586.tar.gz" #{dist_x64_dirname})]
+  sh %[(cd #{BUILD_DIST_X64_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x64_dirname}.tar.gz --owner=root --group=root --exclude ".git" --exclude "*i586.tar.gz" #{dist_x64_dirname})]
 end
 
 module FileUtils
