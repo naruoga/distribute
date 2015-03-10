@@ -24,7 +24,7 @@ cd `dirname $0` || exit 1
 . ./func.conf
 . $AIPO_HOME/conf/jre.conf
 . $AIPO_HOME/conf/tomcat.conf
-. $AIPO_HOME/conf/postgres.conf
+. $AIPO_HOME/conf/postgresql.conf
 
 #///////////////////////////////////////////////
 # Extract Aipo.

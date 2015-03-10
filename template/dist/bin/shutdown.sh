@@ -23,7 +23,7 @@ cd `dirname $0` || exit 1
 . ./func.conf
 . ../conf/jre.conf
 . ../conf/tomcat.conf
-. ../conf/postgres.conf
+. ../conf/postgresql.conf
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME

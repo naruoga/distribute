@@ -42,7 +42,7 @@ if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 sh bin/jre.sh  2>&1 | tee -a install.log
 if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
-sh bin/postgres.sh  2>&1 | tee -a install.log
+sh bin/postgresql.sh  2>&1 | tee -a install.log
 if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
 
 sh bin/tomcat.sh  2>&1 | tee -a install.log

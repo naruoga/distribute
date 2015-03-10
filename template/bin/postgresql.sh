@@ -235,7 +235,7 @@ BODY
 #///////////////////////////////////////////////
 
 mkdir -p $AIPO_HOME/conf
-cat << BODY > $AIPO_HOME/conf/postgres.conf
+cat << BODY > $AIPO_HOME/conf/postgresql.conf
 POSTGRES_HOME=$POSTGRES_HOME
 POSTGRES_USER=$POSTGRES_USER
 POSTGRES_PASSWORD=$POSTGRES_PASSWORD

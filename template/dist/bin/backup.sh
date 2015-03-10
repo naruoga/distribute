@@ -23,7 +23,7 @@ cd `dirname $0` || exit 1
 . ./func.conf
 . ../conf/jre.conf
 . ../conf/tomcat.conf
-. ../conf/postgres.conf
+. ../conf/postgresql.conf
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME
@@ -64,8 +64,8 @@ echo "Tomcat を停止しています。"
 sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
 
 echo "Aipo をバックアップしています。"
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fp -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db_sql.dump org001 > $AIPO_HOME/backup/dump1.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
-sudo -u ${POSTGRES_USER} $AIPO_HOME/postgres/bin/pg_dump -c -b -o -Fc -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db.dump org001 > $AIPO_HOME/backup/dump2.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
+sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/pg_dump -c -b -o -Fp -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db_sql.dump org001 > $AIPO_HOME/backup/dump1.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
+sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/pg_dump -c -b -o -Fc -U ${POSTGRES_USER} -p $POSTGRES_PORT -f $AIPO_HOME/backup/$bg_dir/aipo_db.dump org001 > $AIPO_HOME/backup/dump2.log 2>&1 || { echoBackupError "データベースダンプ中にエラーが発生しました。"; exit 1; }
 
 mkdir -p $TOMCAT_HOME/data/files
 mkdir -p $TOMCAT_HOME/data/mail
