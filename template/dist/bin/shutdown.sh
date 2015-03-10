@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Aipo is a groupware program developed by Aimluck,Inc.
 # Copyright (C) 2004-2015 Aimluck,Inc.
@@ -29,7 +29,7 @@ cd `dirname $0` || exit 1
 export JRE_HOME=$JAVA_HOME
 export CATALINA_OPTS=$CATALINA_OPTS
 
-echo "Shutdown Aipo $AIPO_VERSION."
+echo "Stopping Aipo $AIPO_VERSION."
 
 sh $TOMCAT_HOME/bin/shutdown.sh > $TOMCAT_HOME/logs/shutdown.log 2>&1
 

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Aipo is a groupware program developed by Aimluck,Inc.
 # Copyright (C) 2004-2015 Aimluck,Inc.
@@ -44,3 +44,17 @@ sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/postmaster -D $POSTGRES_HOME/data -i
 portListenWait ${POSTGRES_PORT}
 
 sh $TOMCAT_HOME/bin/startup.sh >> $TOMCAT_HOME/logs/startup.log 2>&1
+
+
+ipaddr=`ip -f inet -o addr | grep -v "127.0.0.1" | cut -d\  -f 7 | cut -d/ -f 1 | awk 'NR == 1'`
+if [ "$ipaddr" == "" ]; then
+ipaddr="127.0.0.1"
+fi
+
+port=":$TOMCAT_PORT"
+if [ "$port" == ":80" ]; then
+port=
+fi
+
+echo "Access URL : http://${ipaddr}${port}"
+

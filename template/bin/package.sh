@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # Aipo is a groupware program developed by Aimluck,Inc.
 # Copyright (C) 2004-2015 Aimluck,Inc.
