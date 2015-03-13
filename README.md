@@ -9,6 +9,18 @@ Aipo の配布用パッケージをビルドするプロジェクトです。
 * Maven3
 * Ruby
 
+### Mac 環境
+
+Mac 環境でビルドする場合、GNU tar が必要となります。
+
+```
+brew install gnu-tar
+```
+
+```~/.bash_profile```
+export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
+```
+
 ## 利用方法
 
 ### Linux版インストーラ
