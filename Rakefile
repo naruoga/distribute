@@ -55,6 +55,15 @@ namespace :installer do
   end
 end
 
+namespace :updater do
+  task :"7020to8000" do
+    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+    build_aipo
+    build_aipo_opensocial
+    installer_package(version: "#{STABLE_VERSION}", version_short: "update7020to8000", script: "update7020to8000.sh")
+  end
+end
+
 def build_aipo(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
   sh %[(cd #{BUILD_DIR}; git clone -b #{branch} https://github.com/aipocom/aipo.git)]
@@ -67,7 +76,7 @@ def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
-def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}")
+def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}", script: "installer.sh")
   dist_x86_dirname = "aipo-#{version_short}-linux-x86"
   dist_x64_dirname = "aipo-#{version_short}-linux-x64"
   sh %[mkdir -p "#{TARGET_DIR}"]
@@ -75,6 +84,8 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}"]
   sh %[mkdir -p "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql"]
   sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist/sql"]
+  sh %[mkdir -p "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin"]
+  sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/bin"]
 
   FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
@@ -82,10 +93,13 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
-  FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}")
+  FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/dist/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
+  FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/bin/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin")
+  FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/#{script}"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/")
+
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
 
- FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
+  FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
 
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
