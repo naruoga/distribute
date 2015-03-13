@@ -20,6 +20,8 @@
 
 cd `dirname $0` || exit 1
 
+. bin/func.conf
+
 if [ "$1" = "" ]; then
 	AIPO_HOME=/usr/local/aipo
 else
@@ -38,6 +40,13 @@ export AIPO_HOME=$AIPO_HOME
 rm -rf install.log
 sh bin/validate.sh 2>&1 | tee -a install.log
 if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi
+
+if [ -e $AIPO_HOME ]; then
+	echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
+	exit 1
+else
+	mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }
+fi
 
 sh bin/jre.sh  2>&1 | tee -a install.log
 if [ "${PIPESTATUS[0]}" != "0" ]; then { exit 1; } fi

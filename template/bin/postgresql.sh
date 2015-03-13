@@ -23,9 +23,15 @@ cd `dirname $0` || exit 1
 . ./install.conf
 . ./func.conf
 
+if [ "$1" = "update" ]; then
+	. ./update.conf
+fi
+
 #///////////////////////////////////////////////
 # Whether PostgreSQL user exists.
 #///////////////////////////////////////////////
+
+if [ "$OLD_POSTGRES_USER" = "" ]; then
 
 unset tmp_str
 tmp_str=`grep ${POSTGRES_USER} /etc/passwd`
@@ -47,11 +53,18 @@ while [ 1 ]; do
 		exit 1
 	fi
 done
-POSTGRES_USER=$tmp_user
+
+	POSTGRES_USER=$tmp_user
+
+else
+	POSTGRES_USER=$OLD_POSTGRES_USER
+fi
 
 #///////////////////////////////////////////////
 # Generate password for PostgreSQL.
 #///////////////////////////////////////////////
+
+if [ "$OLD_POSTGRES_PASS" = "" ]; then
 
 str_seed1="abcdefghijklmnopqrstuvwxyz"
 str_seed2="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -96,9 +109,15 @@ while [ $count -lt 2 ]; do
 	count=`expr $count + 1`
 done
 
+else
+	POSTGRES_PASSWORD=$OLD_POSTGRES_PASS
+fi
+
 #///////////////////////////////////////////////
 # Create PostgreSQL user.
 #///////////////////////////////////////////////
+
+if [ "$OLD_POSTGRES_USER" = "" ]; then
 
 unset tmp_str
 tmp_str=`grep ${POSTGRES_USER} /etc/group`
@@ -134,9 +153,13 @@ chown ${POSTGRES_USER}:${POSTGRES_USER} /home/${POSTGRES_USER}
 
 echo "${POSTGRES_USER} created."
 
+fi
+
 #///////////////////////////////////////////////
 # Port check not used.
 #///////////////////////////////////////////////
+
+if [ "$OLD_POSTGRES_PORT" = "" ]; then
 
 unset tmp_str
 flag_1="0"
@@ -164,6 +187,13 @@ while [ 1 ]; do
 	fi
 done
 
+else
+
+	POSTGRES_PORT=$OLD_POSTGRES_PORT
+
+fi
+	
+
 #//////////////////////////////////////////////////
 # Delete PostgreSQL tmp file, lock file if exsists.
 #//////////////////////////////////////////////////
@@ -190,6 +220,7 @@ tmp_dir=/tmp/.aipo.`date '+%Y%m%d'`
 mkdir -p $tmp_dir
 tar xvzf $DIST_DIR/$POSTGRES_SRC -C $tmp_dir
 
+current_dir=`pwd`
 cd $tmp_dir/$POSTGRES_SRC_DIRNAME
 
 sudo -u ${POSTGRES_USER} ./configure --prefix=$POSTGRES_HOME --with-pgport=$POSTGRES_PORT || { echoError "error occurred during the configure."; exit 1; }
@@ -197,7 +228,20 @@ sudo -u ${POSTGRES_USER} ./configure --prefix=$POSTGRES_HOME --with-pgport=$POST
 sudo -u ${POSTGRES_USER} make all || { echoError "error occurred during the make."; exit 1; }
 
 make install || { echoError "error occurred during the make install."; exit 1; }
-cd -
+
+cd ./contrib/pg_upgrade/
+
+make || { echoError "error occurred during the make install."; exit 1; }
+
+make install || { echoError "error occurred during the make install."; exit 1; }
+
+cd ../pg_upgrade_support/
+
+make || { echoError "error occurred during the make install."; exit 1; }
+
+make install || { echoError "error occurred during the make install."; exit 1; }
+
+cd $current_dir
 
 rm -rf $tmp_dir
 
@@ -219,6 +263,8 @@ sudo -u ${POSTGRES_USER} sed -i "s/$tmp_str/port = $POSTGRES_PORT/g" $POSTGRES_H
 # Setting env.
 #///////////////////////////////////////////////
 
+if [ "$OLD_POSTGRES_USER" = "" ]; then
+
 sudo -u ${POSTGRES_USER} cp -rf /home/${POSTGRES_USER}/.bash_profile /home/${POSTGRES_USER}/.bash_profile~
 
 cat << BODY >> /home/${POSTGRES_USER}/.bash_profile
@@ -226,9 +272,11 @@ export PATH=$POSTGRES_HOME/bin:"$PATH"
 export POSTGRES_HOME=$POSTGRES_HOME
 export PGLIB=$POSTGRES_HOME/lib
 export PGDATA=$POSTGRES_HOME/data
-export MANPATH="$MANPATH":$POSTGRES_HOME/man
-export LD_LIBRARY_PATH=/usr/local/lib:"$LD_LIBRARY_PATH":"$PGLIB"
+export MANPATH="\$MANPATH":$POSTGRES_HOME/man
+export LD_LIBRARY_PATH=/usr/local/lib:"\$LD_LIBRARY_PATH":"\$PGLIB"
 BODY
+
+fi
 
 #///////////////////////////////////////////////
 # Export config file.

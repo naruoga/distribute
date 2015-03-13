@@ -89,7 +89,9 @@ mkdir -p $tmp_dir
 cp -rf $DIST_DIR/sql/org001.sql $tmp_dir/org001.sql
 cd $AIPO_HOME
 sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/createdb org001 -O ${POSTGRES_USER} -U ${POSTGRES_USER}
-sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/psql -U ${POSTGRES_USER} -d org001 -p $POSTGRES_PORT -f $tmp_dir/org001.sql
+if [ "$1" != "update" ]; then
+	sudo -u ${POSTGRES_USER} $POSTGRES_HOME/bin/psql -U ${POSTGRES_USER} -d org001 -p $POSTGRES_PORT -f $tmp_dir/org001.sql
+fi
 cd -
 rm -rf $tmp_dir
 
@@ -103,9 +105,13 @@ sudo -u ${POSTGRES_USER} echo "alter user ${POSTGRES_USER} with password '$POSTG
 chown ${POSTGRES_USER}:${POSTGRES_USER} $POSTGRES_HOME/data/pg_hba.conf
 sudo -u ${POSTGRES_USER} sed -i "s/ trust/ password/g" $POSTGRES_HOME/data/pg_hba.conf
 
+if [ "$1" != "update" ]; then
+
 sudo -u ${POSTGRES_USER} echo "localhost:$POSTGRES_PORT:org001:${POSTGRES_USER}:$POSTGRES_PASSWORD" > /home/${POSTGRES_USER}/.pgpass
 chown ${POSTGRES_USER}:${POSTGRES_USER} /home/${POSTGRES_USER}/.pgpass
 sudo -u ${POSTGRES_USER} chmod 0600 /home/${POSTGRES_USER}/.pgpass
+
+fi
 
 #///////////////////////////////////////////////
 # Stop PostgreSQL.
@@ -134,6 +140,7 @@ AIPO_VERSION=$AIPO_VERSION
 AIPO_HOME=$AIPO_HOME
 BODY
 
+if [ "$1" != "update" ]; then
 
 ipaddr=`ip -f inet -o addr | grep -v "127.0.0.1" | cut -d\  -f 7 | cut -d/ -f 1 | awk 'NR == 1'`
 if [ "$ipaddr" == "" ]; then
@@ -159,3 +166,4 @@ echoInfo "$AIPO_HOME/bin/startup.sh"
 echoInfo "停止方法:"
 echoInfo "$AIPO_HOME/bin/shutdown.sh"
 
+fi

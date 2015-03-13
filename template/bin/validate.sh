@@ -85,11 +85,3 @@ if [ "$tmp_packages" != "" ]; then
 	exit 1
 fi
 
-if [ -e $AIPO_HOME ]; then
-echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
-exit 1
-else
-mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }
-fi
-
-
