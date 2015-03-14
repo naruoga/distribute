@@ -17,7 +17,9 @@ Mac 環境でビルドする場合、GNU tar が必要となります。
 brew install gnu-tar
 ```
 
-```~/.bash_profile```
+~/.bash_profile
+
+``` 
 export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
 ```
 
@@ -39,4 +41,15 @@ rake installer:latest
 ```
 rake installer:stable
 ```
+
+### Linux版アップデータ
+
+```target``` フォルダに 32bit版、64bit版の Aipo アップデータがビルドされます。
+
+#### 7.0.2 to 8.0
+
+```
+rake updater:7020to8000
+```
+
 
