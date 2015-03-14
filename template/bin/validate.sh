@@ -23,6 +23,20 @@ cd `dirname $0` || exit 1
 . ./install.conf
 . ./func.conf
 
+if [ "$1" = "update" ]; then
+. ./update.conf
+fi
+
+#///////////////////////////////////////////////
+# Check bit.
+#///////////////////////////////////////////////
+
+tmp_bit=`getconf LONG_BIT`
+if [ "$tmp_bit" != "$LONG_BIT" ]; then
+    echoError "$tmp_bit 版のインストーラ・アップデータを利用してください。"
+    exit 1
+fi
+
 
 #///////////////////////////////////////////////
 # Check user.
@@ -33,6 +47,10 @@ if [ "${current_user}" != "root" ]; then
 	echoError "インストールはroot権限で行ってください。"
 	exit 1
 fi
+
+#///////////////////////////////////////////////
+# Check package.
+#///////////////////////////////////////////////
 
 $tmp_packages
 if [ -x /usr/bin/gcc ]; then

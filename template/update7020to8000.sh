@@ -58,7 +58,7 @@ fi
 
 if [ "$old_version" != "7.0.2.0" ]; then
 	export AIPO_VERSION=8.0.0.0
-	echoError "このアップデーターはAipo 7.0.2.0 で動作します。"
+	echoError "このアップデータは Aipo 7.0.2.0 で動作します。"
 	exit 1
 fi
 
@@ -87,7 +87,7 @@ databaseBackup
 mv $AIPO_HOME ${AIPO_HOME}.backup${TIME}
 
 if [ -e $AIPO_HOME ]; then
-        echoError "$AIPO_HOME ディレクトリにAipoがインストールされています。"
+        echoError "$AIPO_HOME ディレクトリに Aipo がインストールされています。"
         exit 1
 else
         mkdir -p $AIPO_HOME || { echoError "$AIPO_HOME ディレクトリが作成できませんでした。"; exit 1; }

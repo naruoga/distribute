@@ -104,6 +104,7 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /LONG_BIT=64/, "LONG_BIT=32")
 
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
   sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --owner=root --group=root --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]

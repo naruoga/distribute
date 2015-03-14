@@ -23,6 +23,10 @@ cd `dirname $0` || exit 1
 . ./install.conf
 . ./func.conf
 
+if [ "$1" = "update" ]; then
+. ./update.conf
+fi
+
 #///////////////////////////////////////////////
 # Extract jre.
 #///////////////////////////////////////////////

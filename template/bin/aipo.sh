@@ -26,6 +26,10 @@ cd `dirname $0` || exit 1
 . $AIPO_HOME/conf/tomcat.conf
 . $AIPO_HOME/conf/postgresql.conf
 
+if [ "$1" = "update" ]; then
+. ./update.conf
+fi
+
 #///////////////////////////////////////////////
 # Extract Aipo.
 #///////////////////////////////////////////////
