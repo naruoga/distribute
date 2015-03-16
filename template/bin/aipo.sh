@@ -54,6 +54,8 @@ mkdir -p $AIPO_HOME/bin
 cp -rf $DIST_DIR/bin/* $AIPO_HOME/bin/
 chmod +x $AIPO_HOME/bin/*.sh
 
+cp -rf $DIST_DIR/license $AIPO_HOME
+
 #///////////////////////////////////////////////
 # Configure webapps.
 #///////////////////////////////////////////////

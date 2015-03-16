@@ -51,7 +51,7 @@ namespace :installer do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo(branch: "#{STABLE_BRANCH}")
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
-    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "#{STABLE_VERSION_SHORT}")
   end
 end
 
@@ -60,7 +60,7 @@ namespace :updater do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo
     build_aipo_opensocial
-    installer_package(version: "#{STABLE_VERSION}", version_short: "update7020to8000", script: "update7020to8000.sh")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7020to8000", script: "update7020to8000.sh", target_version: "7.0.2")
   end
 end
 
@@ -76,9 +76,9 @@ def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
-def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}", script: "installer.sh")
-  dist_x86_dirname = "aipo-#{version_short}-linux-x86"
-  dist_x64_dirname = "aipo-#{version_short}-linux-x64"
+def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}", prefix: "#{LATEST_VERSION_SHORT}", script: "installer.sh", target_version: "")
+  dist_x86_dirname = "aipo-#{prefix}-linux-x86"
+  dist_x64_dirname = "aipo-#{prefix}-linux-x64"
   sh %[mkdir -p "#{TARGET_DIR}"]
   sh %[mkdir -p "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}"]
   sh %[mkdir -p "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}"]
@@ -97,6 +97,17 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/bin/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin")
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/#{script}"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/")
 
+  if "#{script}" == "installer.sh" then
+    FileUtils.cp(FileList["#{TEMPLATE_DIR}/readme_install.txt"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/")
+    sh %[mv "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme_install.txt" "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt"]
+  else
+    FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/readme_update.txt"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/")
+    sh %[mv "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme_update.txt" "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt"]
+  end
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{AIPO_VERSION_SHORT}/, "#{version_short}")
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{SCRIPT}/, "#{script}")
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{TARGET_VERSION}/, "#{target_version}")
+  
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
 
   FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
@@ -105,6 +116,8 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /LONG_BIT=64/, "LONG_BIT=32")
+  FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{DIST_DIRNAME}/, "#{dist_x86_dirname}")
+  FileUtils.sed("#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/readme.txt", /{DIST_DIRNAME}/, "#{dist_x64_dirname}")
 
   sh %[rm -rf "#{TARGET_DIR}/#{dist_x86_dirname}.tar.gz"]
   sh %[(cd #{BUILD_DIST_X86_DIR}; tar cvzf #{TARGET_DIR}/#{dist_x86_dirname}.tar.gz --owner=root --group=root --exclude ".git" --exclude "*x64.tar.gz" #{dist_x86_dirname})]
