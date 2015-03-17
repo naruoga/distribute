@@ -27,7 +27,7 @@ cd `dirname $0` || exit 1
 . ../conf/aipo.conf
 
 export JRE_HOME=$JAVA_HOME
-export CATALINA_HOME=$CATALINA_HOME
+export CATALINA_OPTS=$CATALINA_OPTS
 
 echo "Aipo のリストアを開始します。"
 
