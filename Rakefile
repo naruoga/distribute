@@ -60,7 +60,7 @@ namespace :updater do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo
     build_aipo_opensocial
-    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7020to8000", script: "update7020to8000.sh", target_version: "7.0.2")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0", script: "update7020to8000.sh", target_version: "7.0.2")
   end
 end
 
