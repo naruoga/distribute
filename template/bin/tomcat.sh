@@ -95,6 +95,7 @@ done
 #///////////////////////////////////////////////
 
 sed -i 's|protocol="HTTP/1.1"|protocol="org.apache.coyote.http11.Http11NioProtocol"|g' $TOMCAT_HOME/conf/server.xml
+sed -i 's|org.apache.coyote.http11.Http11Protocol|org.apache.coyote.http11.Http11NioProtocol"|g' $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8080\"|port=\"$TOMCAT_PORT\"|g" $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8005\"|port=\"$TOMCAT_SHUTDOWN_PORT\"|g" $TOMCAT_HOME/conf/server.xml
 sed -i "s|<session-timeout>30</session-timeout>|<session-timeout>180</session-timeout>|g" $TOMCAT_HOME/conf/web.xml
