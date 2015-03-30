@@ -94,7 +94,8 @@ done
 # Configure.
 #///////////////////////////////////////////////
 
-sed -i 's|protocol="HTTP/1.1"|protocol="org.apache.coyote.http11.Http11NioProtocol"|g' $TOMCAT_HOME/conf/server.xml
+sed -i 's|protocol="HTTP/1.1"|maxThreads="1000" protocol="org.apache.coyote.http11.Http11NioProtocol"|g' $TOMCAT_HOME/conf/server.xml
+sed -i 's|maxThreads="150"|maxThreads="1000"|g' $TOMCAT_HOME/conf/server.xml
 sed -i 's|org.apache.coyote.http11.Http11Protocol|org.apache.coyote.http11.Http11NioProtocol"|g' $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8080\"|port=\"$TOMCAT_PORT\"|g" $TOMCAT_HOME/conf/server.xml
 sed -i "s|port=\"8005\"|port=\"$TOMCAT_SHUTDOWN_PORT\"|g" $TOMCAT_HOME/conf/server.xml
