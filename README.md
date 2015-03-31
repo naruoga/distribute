@@ -57,4 +57,7 @@ rake installer:stable
 rake updater:7020to8000
 ```
 
+## ライセンス
+
+[AGPLv3](http://ja.wikipedia.org/wiki/Affero_General_Public_License)
 
