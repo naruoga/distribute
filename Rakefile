@@ -20,7 +20,7 @@ require 'fileutils'
 require 'date'
 
 LATEST_BRANCH        = "master"
-STABLE_BRANCH        = "master"
+STABLE_BRANCH        = "v8.0-rc1"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
@@ -58,8 +58,8 @@ end
 namespace :updater do
   task :"7020to8000" do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
-    build_aipo
-    build_aipo_opensocial
+    build_aipo(branch: "#{STABLE_BRANCH}")
+    build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0", script: "update7020to8000.sh", target_version: "7.0.2")
   end
 end
