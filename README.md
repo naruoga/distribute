@@ -1,6 +1,11 @@
 # Aipo Distribute
 
-Aipo の配布用パッケージをビルドするプロジェクトです。
+Aipoの配布用パッケージをビルドするプロジェクトです。
+
+* [公式サイト](http://www.aipo.com/)  
+* [ダウンロード](http://free.aipo.com/)
+* [ドキュメント](http://doc.aipo.com/)  
+* [コミュニティ](http://user.aipo.com/)  
 
 ## 必要環境
 
