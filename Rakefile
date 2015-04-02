@@ -20,7 +20,7 @@ require 'fileutils'
 require 'date'
 
 LATEST_BRANCH        = "master"
-STABLE_BRANCH        = "v8.0-rc1"
+STABLE_BRANCH        = "v8.0"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
@@ -107,7 +107,7 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{AIPO_VERSION_SHORT}/, "#{version_short}")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{SCRIPT}/, "#{script}")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{TARGET_VERSION}/, "#{target_version}")
-  
+
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /AIPO_VERSION=(.*)/, "AIPO_VERSION=#{version}")
 
   FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
