@@ -24,8 +24,8 @@ STABLE_BRANCH        = "v8.0"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
-STABLE_VERSION       = "8.0.0.0"
-STABLE_VERSION_SHORT = "8.0"
+STABLE_VERSION       = "8.0.1.0"
+STABLE_VERSION_SHORT = "8.0.1"
 
 BUILD_DIR            = File.expand_path("build")
 BUILD_DIST_DIR       = File.expand_path("build/dist")
@@ -41,12 +41,14 @@ task :clean do
 end
 
 namespace :installer do
+  desc "build installer for latest"
   task :latest do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo
     build_aipo_opensocial
     installer_package
   end
+  desc "build installer for stable"
   task :stable do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo(branch: "#{STABLE_BRANCH}")
@@ -56,11 +58,19 @@ namespace :installer do
 end
 
 namespace :updater do
-  task :"7020to8000" do
+  desc "build updater for 7.0.2 to 8.0.1"
+  task :"7020to8010" do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo(branch: "#{STABLE_BRANCH}")
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
-    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0", script: "update7020to8000.sh", target_version: "7.0.2")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0.1", script: "update7020to8010.sh", target_version: "7.0.2")
+  end
+  desc "build updater for 8.0.0 to 8.0.1"
+  task :"8000to8010" do
+    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+    build_aipo(branch: "#{STABLE_BRANCH}")
+    build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0")
   end
 end
 
