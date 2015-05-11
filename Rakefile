@@ -20,7 +20,8 @@ require 'fileutils'
 require 'date'
 
 LATEST_BRANCH        = "master"
-STABLE_BRANCH        = "v8.0"
+# FIXME: master -> v8.0.1
+STABLE_BRANCH        = "master"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
@@ -38,6 +39,25 @@ task default: ["installer:latest"]
 
 task :clean do
   rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+end
+
+namespace :all do
+  desc "build all for latest"
+  task :latest do
+    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+    build_aipo
+    build_aipo_opensocial
+    installer_package
+  end
+  desc "build all for stable"
+  task :stable do
+    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+    build_aipo(branch: "#{STABLE_BRANCH}")
+    build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "#{STABLE_VERSION_SHORT}")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0.1", script: "update7020to8010.sh", target_version: "7.0.2")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0")
+  end
 end
 
 namespace :installer do
