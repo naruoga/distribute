@@ -26,7 +26,7 @@ TIME=`date '+%Y%m%d%H%M%S'`
 export TIME
 
 if [ "$1" = "" ]; then
-        export AIPO_VERSION=8.0.0.0
+        export AIPO_VERSION=8.0.1.0
         echoError "アップデート先ディレクトリを指定してください。"
         exit 1
 else
@@ -50,14 +50,14 @@ else
         	tmp_str=`cat $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/AipoResources.properties | grep aipo.version=`
         	old_version=`echo "$tmp_str" | cut -f 2 -d "="`
 	else
-		export AIPO_VERSION=8.0.0.0
+			export AIPO_VERSION=8.0.1.0
         	echoError "指定されたディレクトリに Aipo がインストールされていません。"
         	exit 1
 	fi
 fi
 
 if [ "$old_version" != "7.0.2.0" ]; then
-	export AIPO_VERSION=8.0.0.0
+	export AIPO_VERSION=8.0.1.0
 	echoError "このアップデータは Aipo 7.0.2.0 で動作します。"
 	exit 1
 fi
