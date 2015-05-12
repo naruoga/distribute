@@ -56,7 +56,7 @@ namespace :all do
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "#{STABLE_VERSION_SHORT}")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0.1", script: "update7020to8010.sh", target_version: "7.0.2")
-    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0", middleware: false)
   end
 end
 
@@ -90,7 +90,7 @@ namespace :updater do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
     build_aipo(branch: "#{STABLE_BRANCH}")
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
-    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0", middleware: false)
   end
 end
 
@@ -106,7 +106,7 @@ def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
-def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}", prefix: "#{LATEST_VERSION_SHORT}", script: "installer.sh", target_version: "")
+def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VERSION_SHORT}", prefix: "#{LATEST_VERSION_SHORT}", script: "installer.sh", target_version: "", middleware: true)
   dist_x86_dirname = "aipo-#{prefix}-linux-x86"
   dist_x64_dirname = "aipo-#{prefix}-linux-x64"
   sh %[mkdir -p "#{TARGET_DIR}"]
@@ -120,9 +120,11 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp("#{BUILD_DIR}/aipo/war/target/aipo.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
+  if middleware then
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
+  end
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/dist/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/bin/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin")
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/#{script}"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/")
@@ -142,8 +144,10 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
 
   FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
 
+  if middleware then
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
+  end
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /LONG_BIT=64/, "LONG_BIT=32")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/readme.txt", /{DIST_DIRNAME}/, "#{dist_x86_dirname}")
