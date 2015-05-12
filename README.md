@@ -41,7 +41,7 @@ export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
 rake installer:latest
 ```
 
-#### 安定版（8.0）
+#### 安定版（8.0.1）
 
 ```
 rake installer:stable
@@ -51,10 +51,16 @@ rake installer:stable
 
 ```target``` フォルダに 32bit版、64bit版の Aipo アップデータがビルドされます。
 
-#### 7.0.2 to 8.0
+#### 7.0.2 to 8.0.1
 
 ```
-rake updater:7020to8000
+rake updater:7020to8010
+```
+
+#### 8.0 to 8.0.1
+
+```
+rake updater:8000to8010
 ```
 
 ## ライセンス
