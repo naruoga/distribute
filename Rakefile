@@ -42,13 +42,6 @@ task :clean do
 end
 
 namespace :all do
-  desc "build all for latest"
-  task :latest do
-    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
-    build_aipo
-    build_aipo_opensocial
-    installer_package
-  end
   desc "build all for stable"
   task :stable do
     rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
