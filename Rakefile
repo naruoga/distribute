@@ -121,7 +121,7 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
   if middleware then
-  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://ftp.riken.jp/net/apache/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
+  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
   end
