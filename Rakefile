@@ -21,7 +21,7 @@ require 'date'
 
 LATEST_BRANCH        = "master"
 # FIXME: master -> v8.0.1
-STABLE_BRANCH        = "master"
+STABLE_BRANCH        = "v8.0.1-rc1"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
