@@ -56,7 +56,7 @@ else
 fi
 
 
-if [ "$old_version" !== "8.0.0.0" ]; then
+if [ "$old_version" != "8.0.0.0" ]; then
 	echoError "このアップデータは Aipo 8.0.0.0 で動作します。"
 	exit 1
 fi
