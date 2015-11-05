@@ -4,8 +4,8 @@
 
   【 Version 】{AIPO_VERSION_SHORT}
 
-  【 Last Update 】2015/03/16
-    Copyright(C) Aimluck,Inc. All Rights Reserved.
+  【 Last Update 】2015/11/05
+    Copyright(C) TOWN, Inc. All Rights Reserved.
 
 ////////////////////////////////////////////////////////////////////
 
