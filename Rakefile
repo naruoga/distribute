@@ -20,12 +20,12 @@ require 'fileutils'
 require 'date'
 
 LATEST_BRANCH        = "master"
-STABLE_BRANCH        = "v8.0.1a"
+STABLE_BRANCH        = "v8.1-rc1"
 NOW                  =  DateTime.now.strftime("%Y%m%d")
 LATEST_VERSION       = "latest-#{NOW}"
 LATEST_VERSION_SHORT = "latest-#{NOW}"
-STABLE_VERSION       = "8.0.1.0"
-STABLE_VERSION_SHORT = "8.0.1"
+STABLE_VERSION       = "8.1.0.0"
+STABLE_VERSION_SHORT = "8.1.0"
 
 BUILD_DIR            = File.expand_path("build")
 BUILD_DIST_DIR       = File.expand_path("build/dist")
@@ -49,6 +49,7 @@ namespace :all do
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "#{STABLE_VERSION_SHORT}")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update7.0.2to8.0.1", script: "update7020to8010.sh", target_version: "7.0.2")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0", middleware: false)
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0.1to8.1", script: "update8010to8100.sh", target_version: "8.0.1")
   end
 end
 
@@ -84,6 +85,13 @@ namespace :updater do
     build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
     installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0to8.0.1", script: "update8000to8010.sh", target_version: "8.0", middleware: false)
   end
+  desc "build updater for 8.0.1 to 8.1.0"
+  task :"8010to8100" do
+    rm_rf(BUILD_DIR) if File.exist?(BUILD_DIR)
+    build_aipo(branch: "#{STABLE_BRANCH}")
+    build_aipo_opensocial(branch: "#{STABLE_BRANCH}")
+    installer_package(version: "#{STABLE_VERSION}", version_short: "#{STABLE_VERSION_SHORT}", prefix: "update8.0.1to8.1", script: "update8010to8100.sh", target_version: "8.0.1")
+  end
 end
 
 def build_aipo(branch: "#{LATEST_BRANCH}")
@@ -113,8 +121,8 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp("#{BUILD_DIR}/aipo-opensocial/war/target/container.war", "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
   FileUtils.cp_r(FileList["#{BUILD_DIR}/aipo/sql/postgres/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist/sql")
   if middleware then
-  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.59/bin/apache-tomcat-7.0.59.tar.gz')]
-  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.6/postgresql-9.3.6.tar.gz')]
+  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.67/bin/apache-tomcat-7.0.67.tar.gz')]
+  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://ftp.postgresql.org/pub/source/v9.3.10/postgresql-9.3.10.tar.gz')]
   sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'https://jdbc.postgresql.org/download/postgresql-9.3-1103.jdbc41.jar')]
   end
   FileUtils.cp_r(FileList["#{TEMPLATE_DIR}/dist/*"], "#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist")
@@ -137,8 +145,8 @@ def installer_package(version: "#{LATEST_VERSION}", version_short: "#{LATEST_VER
   FileUtils.cp_r(FileList["#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/*"], "#{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/")
 
   if middleware then
-  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
-  sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u40-b25/jre-8u40-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
+  sh %[(cd #{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jre-8u66-linux-i586.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
+  sh %[(cd #{BUILD_DIST_X64_DIR}/#{dist_x64_dirname}/dist; curl -LO 'http://download.oracle.com/otn-pub/java/jdk/8u66-b17/jre-8u66-linux-x64.tar.gz' -H 'Cookie: oraclelicense=accept-securebackup-cookie')]
   end
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /x64/, "i586")
   FileUtils.sed("#{BUILD_DIST_X86_DIR}/#{dist_x86_dirname}/bin/install.conf", /LONG_BIT=64/, "LONG_BIT=32")
