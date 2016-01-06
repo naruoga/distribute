@@ -42,18 +42,13 @@ fi
 
 export AIPO_HOME=$AIPO_HOME
 
-if [ -f $AIPO_HOME/tomcat/webapps/aipo/WEB-INF/conf/AipoResources.properties ]; then
-	tmp_str=`cat $AIPO_HOME/tomcat/webapps/aipo/WEB-INF/conf/AipoResources.properties | grep aipo.version=`
+if [ -f $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/AipoResources.properties ]; then
+	tmp_str=`cat $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/AipoResources.properties | grep aipo.version=`
 	old_version=`echo "$tmp_str" | cut -f 2 -d "="`
 else
-	if [ -f $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/AipoResources.properties ]; then
-        	tmp_str=`cat $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/AipoResources.properties | grep aipo.version=`
-        	old_version=`echo "$tmp_str" | cut -f 2 -d "="`
-	else
-			export AIPO_VERSION=8.1.0.0
-        	echoError "指定されたディレクトリに Aipo がインストールされていません。"
-        	exit 1
-	fi
+	export AIPO_VERSION=8.1.0.0
+	echoError "指定されたディレクトリに Aipo がインストールされていません。"
+	exit 1
 fi
 
 if [ "$old_version" != "8.0.1.0" ]; then
@@ -74,9 +69,9 @@ rm -rf $TMP_DIR
 mkdir -p $TMP_DIR
 chmod 777 $TMP_DIR
 
-OLD_POSTGRES_USER=`cat ${AIPO_HOME}/tomcat/webapps/aipo/WEB-INF/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.username=\([A-Za-z0-9]*\)/\1/gp' | tr -d '\r' | tr -d '\n'`
-OLD_POSTGRES_PASS=`cat ${AIPO_HOME}/tomcat/webapps/aipo/WEB-INF/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.password=\([A-Za-z0-9]\)/\1/gp' | tr -d '\r' | tr -d '\n'`
-OLD_POSTGRES_PORT=`cat ${AIPO_HOME}/tomcat/webapps/aipo/WEB-INF/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.url=.*:\([0-9]\+\)\/.*$/\1/gp' | tr -d '\r' | tr -d '\n'`
+OLD_POSTGRES_USER=`cat ${AIPO_HOME}/tomcat/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.username=\([A-Za-z0-9]*\)/\1/gp' | tr -d '\r' | tr -d '\n'`
+OLD_POSTGRES_PASS=`cat ${AIPO_HOME}/tomcat/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.password=\([A-Za-z0-9]\)/\1/gp' | tr -d '\r' | tr -d '\n'`
+OLD_POSTGRES_PORT=`cat ${AIPO_HOME}/tomcat/datasource/dbcp-org001.properties | sed -ne 's/^cayenne\.dbcp\.url=.*:\([0-9]\+\)\/.*$/\1/gp' | tr -d '\r' | tr -d '\n'`
 
 export OLD_POSTGRES_USER
 export OLD_POSTGRES_PASS
