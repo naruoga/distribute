@@ -41,10 +41,10 @@ backup_dir=$AIPO_HOME.backup${TIME}
 
 mkdir -p $AIPO_HOME/tomcat/data/
 
-cp -rf $backup_dir/tomcat/webapps/aipo/WEB-INF/files $AIPO_HOME/tomcat/data/
-cp -rf $backup_dir/tomcat/webapps/aipo/WEB-INF/mail $AIPO_HOME/tomcat/data/
+cp -rf $backup_dir/tomcat/data/files $AIPO_HOME/tomcat/data/
+cp -rf $backup_dir/tomcat/data/mail $AIPO_HOME/tomcat/data/
 
-cp -rf $backup_dir/tomcat/webapps/aipo/WEB-INF/conf/holidays_user.properties $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/
+cp -rf $backup_dir/tomcat/webapps/ROOT/WEB-INF/conf/holidays_user.properties $AIPO_HOME/tomcat/webapps/ROOT/WEB-INF/conf/
 
 #///////////////////////////////////////////////
 # Restore Database.
@@ -58,7 +58,7 @@ databaseRestore
 
 startPostgres
 portListenWait ${POSTGRES_PORT}
-applySQL "7020to8000"
+applySQL "8010to8100"
 stopPostgres
 
 ipaddr=`ip -f inet -o addr | grep -v "127.0.0.1" | cut -d\  -f 7 | cut -d/ -f 1 | awk 'NR == 1'`
