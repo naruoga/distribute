@@ -2,10 +2,10 @@
 
 Aipoの配布用パッケージをビルドするプロジェクトです。
 
-* [公式サイト](http://www.aipo.com/)  
+* [公式サイト](http://www.aipo.com/)
 * [ダウンロード](http://free.aipo.com/)
-* [ドキュメント](http://doc.aipo.com/)  
-* [コミュニティ](http://user.aipo.com/)  
+* [ドキュメント](http://doc.aipo.com/)
+* [コミュニティ](http://user.aipo.com/)
 
 ## 必要環境
 
@@ -24,7 +24,7 @@ brew install gnu-tar
 
 ~/.bash_profile
 
-``` 
+```
 export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
 ```
 
@@ -41,7 +41,7 @@ export PATH=/usr/local/opt/gnu-tar/libexec/gnubin:$PATH
 rake installer:latest
 ```
 
-#### 安定版（8.0.1）
+#### 安定版（8.1.0）
 
 ```
 rake installer:stable
@@ -51,16 +51,10 @@ rake installer:stable
 
 ```target``` フォルダに 32bit版、64bit版の Aipo アップデータがビルドされます。
 
-#### 7.0.2 to 8.0.1
+#### 8.0.1 to 8.1
 
 ```
-rake updater:7020to8010
-```
-
-#### 8.0 to 8.0.1
-
-```
-rake updater:8000to8010
+rake updater:8010to8100
 ```
 
 ## ライセンス
