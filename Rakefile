@@ -34,6 +34,10 @@ BUILD_DIST_X86_DIR   = File.expand_path("build/dist/x86")
 TEMPLATE_DIR         = File.expand_path("template")
 TARGET_DIR           = File.expand_path("target")
 
+# repository
+AIPO_REPO = ENV['AIPO_REPO'] || 'https://github.com/aipocom/aipo.git'
+AIPO_OPENSOCIAL_REPO = ENV['AIPO_OPENSOCIAL_REPO'] || 'https://github.com/aipocom/aipo-opensocial.git' 
+
 task default: ["installer:latest"]
 
 task :clean do
@@ -96,13 +100,13 @@ end
 
 def build_aipo(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
-  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} https://github.com/aipocom/aipo.git)]
+  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_REPO})]
   sh %[(cd #{BUILD_DIR}/aipo; mvn clean; mvn install)]
 end
 
 def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
-  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} https://github.com/aipocom/aipo-opensocial.git)]
+  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_OPENSOCIAL_REPO})]
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
