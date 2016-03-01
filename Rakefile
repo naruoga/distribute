@@ -38,6 +38,11 @@ TARGET_DIR           = File.expand_path("target")
 AIPO_REPO = ENV['AIPO_REPO'] || 'https://github.com/aipocom/aipo.git'
 AIPO_OPENSOCIAL_REPO = ENV['AIPO_OPENSOCIAL_REPO'] || 'https://github.com/aipocom/aipo-opensocial.git' 
 
+# use local dir
+LOCAL = ENV['LOCAL'] || false
+AIPO_REPO_DIR = ENV['AIPO_REPO_DIR']
+AIPO_OPENSOCIAL_REPO_DIR = ENV['AIPO_OPENSOCIAL_REPO_DIR']
+
 task default: ["installer:latest"]
 
 task :clean do
@@ -100,13 +105,21 @@ end
 
 def build_aipo(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
-  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_REPO})]
+  if LOCAL then
+    sh %[(cp -R #{AIPO_REPO_DIR} #{BUILD_DIR}/aipo)]
+  else
+    sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_REPO})]
+  end
   sh %[(cd #{BUILD_DIR}/aipo; mvn clean; mvn install)]
 end
 
 def build_aipo_opensocial(branch: "#{LATEST_BRANCH}")
   sh %[mkdir -p "#{BUILD_DIR}"]
-  sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_OPENSOCIAL_REPO})]
+  if LOCAL then
+    sh %[(cp -R #{AIPO_OPENSOCIAL_REPO_DIR} #{BUILD_DIR}/aipo-opensocial)]
+  else
+    sh %[(cd #{BUILD_DIR}; git clone -b #{branch} #{AIPO_OPENSOCIAL_REPO})]
+  end
   sh %[(cd #{BUILD_DIR}/aipo-opensocial; mvn clean; mvn install)]
 end
 
